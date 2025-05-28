@@ -24355,7 +24355,7 @@ async function getRunIdAndUrl({
       workflowTimeoutMs - elapsedTime
       // Ensure we don't exceed the timeout
     );
-    core4.info(`Waiting for ${waitTime}ms before the next attempt...`);
+    core4.info(`Waiting for ${waitTime / 1000}s before the next attempt...`);
     await sleep(waitTime);
     elapsedTime = Date.now() - startTime;
   }
@@ -24384,7 +24384,7 @@ async function main() {
       distinctIdRegex,
       workflowId,
       workflowTimeoutMs: config2.workflowTimeoutSeconds * 1e3,
-      workflowJobStepsRetryMs: config2.workflowJobStepsRetrySeconds * 1e3
+      workflowJobStepsRetryMs: config2.workflowJobStepsRetrySeconds * 5e2
     });
     if (result.success) {
       handleActionSuccess(result.value.id, result.value.url);
