@@ -24038,7 +24038,7 @@ async function dispatchWorkflow(distinctId) {
   } catch (error5) {
     if (error5 instanceof Error) {
       core3.error(
-        `dispatchWorkflow: An unexpected error has occurred: ${error5.message}`
+        `[JS] dispatchWorkflow: An unexpected error has occurred: ${error5.message}`
       );
       core3.debug(error5.stack ?? "");
     }

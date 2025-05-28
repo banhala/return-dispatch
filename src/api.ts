@@ -49,7 +49,7 @@ export async function dispatchWorkflow(distinctId: string): Promise<void> {
   } catch (error) {
     if (error instanceof Error) {
       core.error(
-        `dispatchWorkflow: An unexpected error has occurred: ${error.message}`,
+        `[TS] dispatchWorkflow: An unexpected error has occurred: ${error.message}`,
       );
       core.debug(error.stack ?? "");
     }

@@ -159,7 +159,7 @@ describe("API", () => {
       assertOnlyCalled(coreErrorLogMock, coreDebugLogMock);
       expect(coreErrorLogMock).toHaveBeenCalledOnce();
       expect(coreErrorLogMock.mock.calls[0]?.[0]).toMatchInlineSnapshot(
-        `"dispatchWorkflow: An unexpected error has occurred: Failed to dispatch action, expected 204 but received 401"`,
+        `"[SPEC] dispatchWorkflow: An unexpected error has occurred: Failed to dispatch action, expected 204 but received 401"`,
       );
       expect(coreDebugLogMock).toHaveBeenCalledOnce();
     });
