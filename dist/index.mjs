@@ -24355,7 +24355,7 @@ async function getRunIdAndUrl({
       workflowTimeoutMs - elapsedTime
       // Ensure we don't exceed the timeout
     );
-    core4.info(`Waiting for ${waitTime / 1000}s`);
+    core4.info(`Waiting for ${waitTime / 500}s`);
     await sleep(workflowJobStepsRetryMs);
     elapsedTime = Date.now() - startTime;
   }
