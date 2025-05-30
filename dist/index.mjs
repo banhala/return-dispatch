@@ -24322,41 +24322,63 @@ async function getRunIdAndUrl({
   );
   let attemptNo = 0;
   let elapsedTime = Date.now() - startTime;
+  const minIntervalMs = 60 * 1e3;
+
+  // sleep 2min for default
+  sleep(2 * 60 * 1e3);
+
   while (elapsedTime < workflowTimeoutMs) {
     attemptNo++;
+
     const fetchWorkflowRunIds2 = await retryOrTimeout(
       () => fetchWorkflowRunIds(workflowId, branch),
       retryTimeout
     );
+
     if (!fetchWorkflowRunIds2.success) {
       core4.debug(
         `Timed out while attempting to fetch Workflow Run IDs, waited ${Date.now() - startTime}ms`
       );
       break;
     }
+
     const workflowRunIds = fetchWorkflowRunIds2.value;
+
     if (workflowRunIds.length > 0) {
       core4.debug(
         `Attempting to get step names for Run IDs: [${workflowRunIds.join(", ")}]`
       );
+
       const result = await attemptToFindRunId(distinctIdRegex, workflowRunIds);
+      
       if (result.success) {
         return result;
       }
+
       core4.info(
         `Exhausted searching IDs in known runs, attempt ${attemptNo}...`
       );
     } else {
       core4.info(`No Run IDs found for workflow, attempt ${attemptNo}...`);
     }
-    const waitTime = Math.min(
-      workflowJobStepsRetryMs * attemptNo,
-      // Lineal backoff
-      workflowTimeoutMs - elapsedTime
-      // Ensure we don't exceed the timeout
-    );
+
+    // const waitTime = Math.min(
+    //   // Decay Backoff
+    //   workflowJobStepsRetryMs * attemptNo,
+    //   minIntervalMs,
+
+    //   workflowTimeoutMs - elapsedTime
+    //   // Ensure we don't exceed the timeout
+    // );
+
+    const waitTime = Math.max(
+      // Decay Backoff
+      workflowJobStepsRetryMs / (2 ** attemptNo),
+      minIntervalMs, 
+    )
+
     core4.info(`Waiting for ${waitTime / 500}s`);
-    await sleep(workflowJobStepsRetryMs);
+    await sleep(waitTime);
     elapsedTime = Date.now() - startTime;
   }
   return { success: false, reason: "timeout" };
